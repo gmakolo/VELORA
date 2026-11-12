@@ -27,7 +27,7 @@ VELORA is a simulated digital banking web application built with Go. It allows u
 Run the application:
 go run .
 
-Open http://localhost:8080` in your browser.
+Open http://localhost:8080 in your browser.
 
 ## Project Status
 
