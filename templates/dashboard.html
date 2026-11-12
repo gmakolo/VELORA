@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | VELORA</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header>
+        <h2>VELORA</h2>
+
+        <form action="/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+    </header>
+
+    <main class="login-container">
+        <h1>Welcome, {{.Name}}!</h1>
+
+        <p>Your banking dashboard</p>
+
+        <div class="balance-card">
+            <p>Available Balance</p>
+            <h1>{{printf "₦%.2f" .Balance}}</h1>
+        </div>
+
+        <p>Account Number: <strong>{{.AccountNumber}}</strong></p>
+
+        <p>Welcome to your VELORA banking experience.</p>
+    </main>
+
+</body>
+</html>

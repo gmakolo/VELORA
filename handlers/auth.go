@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -94,5 +95,48 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 
 		fmt.Fprintf(w, "Welcome to VELORA, %s! Your demo account number is %s.",
 			fullName, accountNumber)
+	}
+}
+
+func LoginHandler(db *sql.DB, store *sessions.CookieStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		email := strings.TrimSpace(r.FormValue("email"))
+		password := r.FormValue("password")
+
+		var userID int
+		var passwordHash string
+
+		err := db.QueryRow(
+			"SELECT id, password_hash FROM users WHERE email = ?",
+			email,
+		).Scan(&userID, &passwordHash)
+
+		if err != nil || bcrypt.CompareHashAndPassword(
+			[]byte(passwordHash), []byte(password),
+		) != nil {
+			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+			return
+		}
+
+		session, err := store.Get(r, "velora-session")
+		if err != nil {
+			http.Error(w, "Session error", http.StatusInternalServerError)
+			return
+		}
+
+		session.Values["user_id"] = userID
+
+		err = session.Save(r, w)
+		if err != nil {
+			http.Error(w, "Could not save session", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
