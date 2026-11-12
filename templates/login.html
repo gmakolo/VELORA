@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | VELORA</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header>
+        <h2>VELORA</h2>
+        <a href="/">Home</a>
+    </header>
+
+    <main class="login-container">
+        <h1>Welcome Back</h1>
+        <p>Log in to your VELORA account.</p>
+
+        <form action="/login" method="POST">
+            <label>Email Address</label>
+            <input type="email" name="email"
+                   placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" name="password"
+                   placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p>Don't have an account? 
+            <a href="/register">Create Account</a>
+        </p>
+    </main>
+
+</body>
+</html>

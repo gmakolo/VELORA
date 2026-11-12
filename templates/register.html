@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | VELORA</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header>
+        <h2>VELORA</h2>
+        <a href="/">Home</a>
+    </header>
+
+    <main class="login-container">
+        <h1>Create Your Account</h1>
+        <p>Join VELORA and start banking smarter.</p>
+
+        <form action="/register" method="POST">
+            <label>Full Name</label>
+            <input type="text" name="fullname"
+                   placeholder="Enter your full name" required>
+
+            <label>Email Address</label>
+            <input type="email" name="email"
+                   placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" name="password"
+                   placeholder="Create a password" required>
+
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password"
+                   placeholder="Confirm your password" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p>Already have an account?
+            <a href="/login">Login</a>
+        </p>
+    </main>
+
+</body>
+</html>
