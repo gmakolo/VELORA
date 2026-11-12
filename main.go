@@ -1,19 +1,31 @@
 package main
 
 import (
-	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Welcome to VELORA!")
-	fmt.Fprintln(w, "Your money. Your future.")
+	tmpl, err := template.ParseFiles("templates/index.html")
+
+	if err != nil {
+		http.Error(w, "Could not load homepage", http.StatusInternalServerError)
+		return
+	}
+
+	tmpl.Execute(w, nil)
 }
 
 func main() {
 	http.HandleFunc("/", homeHandler)
 
-	fmt.Println("VELORA server is running on http://localhost:8080")
+	http.Handle("/static/", http.StripPrefix(
+		"/static/",
+		http.FileServer(http.Dir("static")),
+	))
 
-	http.ListenAndServe(":8080", nil)
+	log.Println("VELORA running at http://localhost:8080")
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
