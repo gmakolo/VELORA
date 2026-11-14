@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | VELORA</title>
+    <script src="/static/theme.js"></script>
+    <link rel="stylesheet" href="/static/theme.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h2>VELORA</h2>
+        <form action="/admin/logout" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+            <button type="submit">Sign out</button>
+        </form>
+    </header>
+    <main class="login-container">
+        <h1>Admin dashboard</h1>
+        <p>You are signed in as an administrator.</p>
+    </main>
+</body>
+</html>

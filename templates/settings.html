@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | VELORA</title>
+    <script src="/static/theme.js"></script>
+    <link rel="stylesheet" href="/static/theme.css">
+    <link rel="stylesheet" href="/static/settings.css">
+</head>
+<body class="settings">
+<main>
+    <header><a href="/dashboard">← Dashboard</a><strong>VELORA</strong></header>
+    <h1>Settings</h1>
+    {{if .Notice}}<p class="notice" role="status">{{.Notice}}</p>{{end}}
+    {{if .Error}}<p class="error" role="alert">{{.Error}}</p>{{end}}
+    <nav aria-label="Settings sections">
+        <a href="#appearance">◐ Appearance</a>
+        <a href="#profile">◉ Profile Settings</a>
+        <a href="#password">◇ Change Password</a>
+    </nav>
+    <section id="appearance">
+        <h2>Appearance</h2>
+        <label class="switch"><span>Dark Mode</span><input id="dark-mode" type="checkbox" role="switch"></label>
+        <p id="theme-notice" hidden>Your browser blocked saving this preference.</p>
+    </section>
+    <section id="profile">
+        <h2>Profile Settings</h2>
+        <img class="profile-picture" src="/static/avatars/{{.Avatar}}.svg" alt="Current profile picture" width="72" height="72">
+        <dl>
+            <dt>Registered email</dt><dd>{{.Email}}</dd>
+            <dt>Account number</dt><dd>{{.Account}}</dd>
+        </dl>
+        <form action="/settings/profile" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+            <label for="name">Full name</label>
+            <input id="name" name="name" value="{{.Name}}" autocomplete="name" maxlength="200" required>
+            <label for="avatar">Profile picture</label>
+            <select id="avatar" name="avatar">
+                <option value="classic" {{if eq .Avatar "classic"}}selected{{end}}>Classic</option>
+                <option value="leaf" {{if eq .Avatar "leaf"}}selected{{end}}>Leaf</option>
+                <option value="sun" {{if eq .Avatar "sun"}}selected{{end}}>Sun</option>
+                <option value="mountain" {{if eq .Avatar "mountain"}}selected{{end}}>Mountain</option>
+            </select>
+            <button type="submit">Save Profile</button>
+        </form>
+    </section>
+    <section id="password">
+        <h2>Change Password</h2>
+        <form action="/settings/password" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+            <label for="current-password">Current password</label>
+            <input id="current-password" name="current_password" autocomplete="current-password" type="password" required>
+            <label for="new-password">New password</label>
+            <input id="new-password" name="new_password" autocomplete="new-password" type="password" aria-describedby="password-rule" required>
+            <small id="password-rule">Use a different password between 12 and 72 bytes.</small>
+            <label for="confirm-password">Confirm new password</label>
+            <input id="confirm-password" name="confirm_password" autocomplete="new-password" type="password" required>
+            <button type="submit">Change Password</button>
+        </form>
+    </section>
+    <section aria-labelledby="general-title">
+        <h2 id="general-title">General Settings</h2>
+        <details><summary>♧ Notifications</summary><p>VELORA currently has no notification delivery service.</p></details>
+        <details><summary>◇ Privacy and Security</summary><p>Your registered email and account number are read-only. Password changes require your current password.</p></details>
+        <details><summary>ⓘ Help and Support</summary><p>Use the dashboard to add simulated funds or check your transaction history.</p></details>
+        <details><summary>◈ About VELORA</summary><p>VELORA is a simulated banking application for learning and portfolio use.</p></details>
+        <form action="/logout" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+            <button class="logout" type="submit">Log Out</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"net/mail"
 	"strings"
 
 	"github.com/gorilla/sessions"
@@ -25,10 +26,10 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		fullName := strings.TrimSpace(r.FormValue("fullname"))
-		email := strings.TrimSpace(r.FormValue("email"))
-		password := r.FormValue("password")
-		confirmPassword := r.FormValue("confirm_password")
+		fullName := strings.TrimSpace(r.PostForm.Get("fullname"))
+		email := strings.TrimSpace(r.PostForm.Get("email"))
+		password := r.PostForm.Get("password")
+		confirmPassword := r.PostForm.Get("confirm_password")
 
 		if fullName == "" || email == "" || password == "" {
 			http.Error(w, "All fields are required", http.StatusBadRequest)
@@ -37,6 +38,11 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 
 		if password != confirmPassword {
 			http.Error(w, "Passwords do not match", http.StatusBadRequest)
+			return
+		}
+		address, err := mail.ParseAddress(email)
+		if len(fullName) > 200 || len(email) > 254 || err != nil || address.Address != email || len(password) > 72 {
+			http.Error(w, "Check your name, email address, and password length.", http.StatusBadRequest)
 			return
 		}
 
@@ -93,9 +99,33 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		fmt.Fprintf(w, "Welcome to VELORA, %s! Your demo account number is %s.",
 			fullName, accountNumber)
 	}
+}
+
+func LoginPage(store *sessions.CookieStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		renderLogin(w, r, store, http.StatusOK, "", "")
+	}
+}
+
+func renderLogin(w http.ResponseWriter, r *http.Request, store *sessions.CookieStore, status int, email, message string) {
+	tmpl, err := FormTemplate(r, store, "templates/login.html")
+	if err != nil {
+		http.Error(w, "Could not load login page", http.StatusInternalServerError)
+		return
+	}
+	session, _ := store.Get(r, "velora-session")
+	_, signedIn := session.Values["user_id"].(int)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(status)
+	tmpl.Execute(w, struct {
+		Email    string
+		Message  string
+		SignedIn bool
+	}{email, message, signedIn})
 }
 
 func LoginHandler(db *sql.DB, store *sessions.CookieStore) http.HandlerFunc {
@@ -105,8 +135,12 @@ func LoginHandler(db *sql.DB, store *sessions.CookieStore) http.HandlerFunc {
 			return
 		}
 
-		email := strings.TrimSpace(r.FormValue("email"))
-		password := r.FormValue("password")
+		email := strings.TrimSpace(r.PostFormValue("email"))
+		password := r.PostFormValue("password")
+		if email == "" || len(email) > 254 || password == "" || len(password) > 72 {
+			renderLogin(w, r, store, http.StatusUnauthorized, "", "Enter your email address and password.")
+			return
+		}
 
 		var userID int
 		var passwordHash string
@@ -119,16 +153,12 @@ func LoginHandler(db *sql.DB, store *sessions.CookieStore) http.HandlerFunc {
 		if err != nil || bcrypt.CompareHashAndPassword(
 			[]byte(passwordHash), []byte(password),
 		) != nil {
-			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+			renderLogin(w, r, store, http.StatusUnauthorized, email, "The email or password is incorrect.")
 			return
 		}
 
-		session, err := store.Get(r, "velora-session")
-		if err != nil {
-			http.Error(w, "Session error", http.StatusInternalServerError)
-			return
-		}
-
+		session := sessions.NewSession(store, "velora-session")
+		session.Options = store.Options
 		session.Values["user_id"] = userID
 
 		err = session.Save(r, w)

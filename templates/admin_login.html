@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sign In | VELORA</title>
+    <script src="/static/theme.js"></script>
+    <link rel="stylesheet" href="/static/theme.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header><h2>VELORA</h2></header>
+    <main class="login-container">
+        <h1>Admin sign in</h1>
+        {{if .}}<p role="alert">{{.}}</p>{{end}}
+        <form action="/admin/login" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+            <label for="admin-email">Email address</label>
+            <input id="admin-email" type="email" name="email" autocomplete="username"
+                   maxlength="254" required>
+            <label for="admin-password">Password</label>
+            <input id="admin-password" type="password" name="password" autocomplete="current-password" required>
+            <button type="submit">Sign in</button>
+        </form>
+    </main>
+</body>
+</html>

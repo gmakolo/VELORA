@@ -1,10 +1,13 @@
 package main
 
 import (
+	"database/sql"
+	"flag"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"velora/database"
 	"velora/handlers"
@@ -13,6 +16,8 @@ import (
 )
 
 func main() {
+	createAdmin := flag.String("create-admin", "", "Create an admin with this email and exit")
+	flag.Parse()
 
 	// Connect to database
 	db, err := database.InitDB()
@@ -22,6 +27,14 @@ func main() {
 	}
 
 	defer db.Close()
+
+	if *createAdmin != "" {
+		if err := database.CreateAdmin(db, *createAdmin, os.Getenv("VELORA_ADMIN_PASSWORD")); err != nil {
+			log.Fatal(err)
+		}
+		log.Println("Admin account created.")
+		return
+	}
 
 	log.Println("VELORA database connected!")
 
@@ -38,42 +51,58 @@ func main() {
 		Path:     "/",
 		MaxAge:   86400,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   os.Getenv("VELORA_SECURE_COOKIES") == "true",
 		SameSite: http.SameSiteLaxMode,
 	}
+	store.MaxAge(store.Options.MaxAge)
 
-	// Website routes
-	http.HandleFunc("/", homeHandler)
+	server := &http.Server{
+		Addr:              ":8080",
+		Handler:           appRoutes(db, store),
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       time.Minute,
+	}
+	log.Println("VELORA running at http://localhost:8080")
+	log.Fatal(server.ListenAndServe())
+}
 
-	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			tmpl, err := template.ParseFiles("templates/login.html")
-			if err != nil {
-				http.Error(w, "Could not load login page",
-					http.StatusInternalServerError)
-				return
-			}
+func appRoutes(db *sql.DB, store *sessions.CookieStore) http.Handler {
+	mux := http.NewServeMux()
+	private := http.NewServeMux()
+	private.HandleFunc("GET /{$}", homeHandler)
 
-			tmpl.Execute(w, nil)
+	private.HandleFunc("GET /login", handlers.LoginPage(store))
+	private.Handle("POST /login", handlers.LimitLogin(handlers.LoginHandler(db, store)))
+
+	private.HandleFunc("GET /register", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, err := handlers.FormTemplate(r, store, "templates/register.html")
+		if err != nil {
+			http.Error(w, "Could not load registration page", http.StatusInternalServerError)
 			return
 		}
 
-		handlers.LoginHandler(db, store)(w, r)
+		tmpl.Execute(w, nil)
 	})
-
-	http.HandleFunc("/register", handlers.RegisterHandler(db))
-	http.HandleFunc("/dashboard", handlers.DashboardHandler(db, store))
-	http.HandleFunc("/logout", handlers.LogoutHandler(store))
+	private.HandleFunc("POST /register", handlers.RegisterHandler(db))
+	private.HandleFunc("GET /dashboard", handlers.DashboardHandler(db, store))
+	private.HandleFunc("GET /transactions", handlers.DashboardHandler(db, store))
+	settings := handlers.SettingsRoutes(db, store)
+	private.Handle("/settings", settings)
+	private.Handle("/settings/", settings)
+	private.HandleFunc("POST /deposit", handlers.DepositHandler(db, store))
+	private.HandleFunc("POST /logout", handlers.LogoutHandler(store))
+	private.Handle("/admin/", handlers.AdminRoutes(db, store))
 
 	// Static files
-	http.Handle("/static/", http.StripPrefix(
+	mux.Handle("/static/", http.StripPrefix(
 		"/static/",
 		http.FileServer(http.Dir("static")),
 	))
 
-	log.Println("VELORA running at http://localhost:8080")
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	mux.Handle("/", handlers.ProtectForms(store, private))
+	return mux
 }
 
 // Homepage handler

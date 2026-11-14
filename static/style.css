@@ -6,9 +6,9 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #101c2c;
-    color: white;
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text);
 }
 
 header {
@@ -19,12 +19,12 @@ header {
 }
 
 header h2 {
-    color: #d8b778;
+    color: var(--link);
     letter-spacing: 3px;
 }
 
 nav a {
-    color: white;
+    color: var(--text);
     text-decoration: none;
     margin-left: 25px;
 }
@@ -40,12 +40,12 @@ main h1 {
 }
 
 main p {
-    color: #c5ced9;
+    color: var(--secondary);
     margin-bottom: 30px;
 }
 
 button {
-    background: #d8b778;
+    background: var(--button); color: var(--on-button);
     border: none;
     padding: 15px 35px;
     border-radius: 5px;
@@ -56,7 +56,7 @@ button {
 footer {
     text-align: center;
     padding: 25px;
-    color: #c5ced9;
+    color: var(--secondary);
 }
 
 
@@ -64,7 +64,7 @@ footer {
     max-width: 420px;
     margin: 60px auto;
     padding: 35px;
-    background: #1c2b40;
+    background: var(--surface);
     border-radius: 12px;
 }
 
@@ -85,10 +85,10 @@ footer {
 
 .login-container input {
     padding: 14px;
-    border: 1px solid #526174;
+    border: 1px solid var(--line);
     border-radius: 6px;
-    background: #101c2c;
-    color: white;
+    background: var(--page);
+    color: var(--text);
 }
 
 .login-container button {
@@ -96,5 +96,7 @@ footer {
 }
 
 .login-container a {
-    color: #d8b778;
+    color: var(--link);
 }
+
+header h2 { border-bottom: 2px solid var(--champagne-gold); }

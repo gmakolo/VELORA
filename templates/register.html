@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account | VELORA</title>
+    <script src="/static/theme.js"></script>
+    <link rel="stylesheet" href="/static/theme.css">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -19,6 +21,7 @@
         <p>Join VELORA and start banking smarter.</p>
 
         <form action="/register" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrfToken}}">
             <label>Full Name</label>
             <input type="text" name="fullname"
                    placeholder="Enter your full name" required>

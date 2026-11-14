@@ -1,0 +1,28 @@
+.settings { margin: 0; }
+.settings * { box-sizing: border-box; }
+.settings main { width: min(100%, 44rem); margin: auto; padding: 1.5rem 1rem 3rem; }
+.settings header, .settings .switch { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.settings header strong { letter-spacing: .15em; border-bottom: 2px solid var(--champagne-gold); }
+.settings nav { display: flex; flex-wrap: wrap; gap: .5rem; }
+.settings nav a { background: var(--tint); border-radius: 999px; padding: .6rem .85rem; text-decoration: none; font-weight: 650; }
+.settings section { margin-top: 1rem; padding: clamp(1rem, 4vw, 1.5rem); border: 1px solid var(--line); border-radius: 1.15rem; background: var(--surface); scroll-margin-top: 1rem; }
+.settings h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+.settings .switch { min-height: 2.75rem; }
+.settings .switch input { width: 1.4rem; height: 1.4rem; accent-color: var(--link); }
+.settings .profile-picture { display: block; border-radius: 50%; }
+.settings dl { display: grid; gap: .25rem; }
+.settings dt, .settings small { color: var(--secondary); }
+.settings dd { margin: 0 0 .5rem; overflow-wrap: anywhere; }
+.settings form { display: grid; gap: .6rem; }
+.settings form label { font-weight: 650; }
+.settings form input, .settings select, .settings button { min-height: 2.75rem; padding: .55rem .75rem; border-radius: .65rem; font: inherit; }
+.settings form input, .settings select { color: var(--text); background: var(--page); border: 1px solid var(--line); width: 100%; }
+.settings button { justify-self: start; color: var(--on-button); background: var(--button); border: 0; font-weight: 750; cursor: pointer; transition: background-color 160ms ease; }
+.settings button:hover { background: var(--button-hover); }
+.settings details { padding-block: .65rem; border-bottom: 1px solid var(--line); }
+.settings summary { cursor: pointer; font-weight: 650; }
+.settings .logout { margin-top: 1rem; }
+.settings .notice, .settings .error { border-radius: .65rem; padding: .75rem; }
+.settings .notice { background: var(--tint); color: var(--link); }
+.settings .error { background: var(--error-bg); color: var(--error); }
+@media (prefers-reduced-motion: reduce) { .settings button { transition: none; } }

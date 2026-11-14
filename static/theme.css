@@ -1,0 +1,47 @@
+:root {
+    --midnight-navy: #101B2D;
+    --deep-navy: #17263B;
+    --electric-teal: #19C6B4;
+    --champagne-gold: #D6B879;
+    --soft-white: #F5F7FA;
+    --dark-text: #202B3C;
+    --muted-grey: #8993A3;
+    --page: var(--soft-white);
+    --surface: #fff;
+    --text: var(--dark-text);
+    --secondary: #536174;
+    --link: #006b61;
+    --tint: #def7f3;
+    --line: #d5dce6;
+    --button: var(--electric-teal);
+    --button-hover: #54d9ca;
+    --on-button: var(--midnight-navy);
+    --error: #912b42;
+    --error-bg: #ffedf1;
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    --page: var(--midnight-navy);
+    --surface: var(--deep-navy);
+    --text: var(--soft-white);
+    --secondary: #b9c5d5;
+    --link: var(--electric-teal);
+    --tint: #193e46;
+    --line: #40516a;
+    --error: #ffadb9;
+    --error-bg: #472639;
+    color-scheme: dark;
+}
+
+:root, body {
+    background: var(--page);
+    color: var(--text);
+}
+
+body {
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+}
+
+a { color: var(--link); }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }

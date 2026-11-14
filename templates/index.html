@@ -1,38 +1,22 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VELORA | Digital Banking</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Welcome to VELORA</title>
+    <script src="/static/theme.js"></script>
+    <link rel="stylesheet" href="/static/theme.css">
+    <link rel="stylesheet" href="/static/home.css">
 </head>
 <body>
-
-    <header>
-        <h2>VELORA</h2>
-
-        <nav>
-            <a href="/">Home</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-            <a href="/login">Sign In</a>
-            <a href="/register" class="nav-button">Create Account</a>
-        </nav>
-    </header>
-
-    <main>
-        <h1>Bank smarter. Live better.</h1>
-        <p>Your money. Your future. Your control.</p>
-
-        <a href="/register" class="get-started">
-            Get Started
-        </a>
+    <main class="welcome">
+        <div class="brand" aria-label="VELORA"><span aria-hidden="true">V</span> VELORA</div>
+        <h1>Welcome to VELORA</h1>
+        <p>Would you like to create an account or log in?</p>
+        <div class="welcome-actions">
+            <a class="create-account" href="/register">Create Account</a>
+            <a class="log-in" href="/login">Log In</a>
+        </div>
     </main>
-
-    <footer>
-        <p>&copy; 2026 VELORA. All rights reserved.</p>
-    </footer>
-
 </body>
 </html>

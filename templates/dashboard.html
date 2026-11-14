@@ -1,36 +1,134 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | VELORA</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>{{if .History}}Transactions{{else}}Dashboard{{end}} | VELORA</title>
+    <script src="/static/theme.js"></script>
+    <link rel="stylesheet" href="/static/theme.css">
+    <link rel="stylesheet" href="/static/dashboard.css">
 </head>
 <body>
-
-    <header>
-        <h2>VELORA</h2>
-
-        <form action="/logout" method="POST">
-            <button type="submit">Logout</button>
-        </form>
+<main class="dashboard">
+    <header class="top-bar">
+        <a class="profile" href="/settings">
+            <img class="avatar" src="/static/avatars/{{.Avatar}}.svg" alt="" width="42" height="42">
+            <span><small>VELORA</small><strong>Hi, {{.Name}}!</strong></span>
+        </a>
+        <div class="tools">
+            <a href="{{if .History}}/dashboard{{end}}#help" aria-label="Help">?</a>
+            <span class="unavailable-tool" title="QR scanner unavailable" role="img" aria-label="QR scanner unavailable">▦</span>
+            <span class="unavailable-tool" title="Notifications unavailable" role="img" aria-label="Notifications unavailable">🔔</span>
+        </div>
     </header>
 
-    <main class="login-container">
-        <h1>Welcome, {{.Name}}!</h1>
+    {{if not .History}}
+    {{if .DepositReference}}<p class="confirmation" role="status">Deposit completed. Reference <strong>{{.DepositReference}}</strong></p>{{end}}
 
-        <p>Your banking dashboard</p>
-
-        <div class="balance-card">
-            <p>Available Balance</p>
-            <h1>{{printf "₦%.2f" .Balance}}</h1>
+    <section class="balance-card" aria-label="Account balance">
+        <div class="balance-body">
+            <div>
+                <details class="balance-visibility">
+                    <summary>Available balance <span class="eye" aria-hidden="true"></span></summary>
+                    <strong class="amount">{{printf "₦%.2f" .Balance}}</strong>
+                </details>
+                <span class="masked" aria-hidden="true">••••••</span>
+                <p class="account-meta">{{.AccountNumber}} <span>• Active</span></p>
+            </div>
+            <details class="add-money">
+                <summary>＋ Add Money</summary>
+                <form action="/deposit" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+                    <label for="deposit-amount">Amount (₦)</label>
+                    <input id="deposit-amount" name="amount" type="number" inputmode="decimal"
+                           min="0.01" max="999999999.99" step="0.01" required>
+                    <button type="submit">Deposit</button>
+                </form>
+            </details>
         </div>
+        <a class="balance-preview" href="/transactions">
+            <span class="preview-icon" aria-hidden="true">↙</span>
+            {{if .Activity}}{{with index .Activity 0}}<span>{{.Description}} <strong>{{.Amount}}</strong></span>{{end}}{{else}}<span>No transactions yet</span>{{end}}
+            <span class="preview-link">Transactions ›</span>
+        </a>
+    </section>
 
-        <p>Account Number: <strong>{{.AccountNumber}}</strong></p>
+    <div class="dashboard-grid">
+        <div class="dashboard-services">
+            <section class="panel" aria-labelledby="quick-title">
+                <h2 id="quick-title">Quick banking</h2>
+                <ul class="services">
+                    <li><span class="service-icon" aria-hidden="true">⇄</span>To VELORA</li>
+                    <li><span class="service-icon" aria-hidden="true">▥</span>To Bank</li>
+                    <li><span class="service-icon" aria-hidden="true">◈</span>Savings</li>
+                    <li><span class="service-icon" aria-hidden="true">₦</span>Loans</li>
+                </ul>
+                <p class="service-note">These services are currently unavailable.</p>
+            </section>
 
-        <p>Welcome to your VELORA banking experience.</p>
-    </main>
+            <section class="panel" aria-labelledby="bills-title">
+                <h2 id="bills-title">Bills &amp; services</h2>
+                <ul class="services">
+                    <li><span class="service-icon" aria-hidden="true">▯</span>Airtime</li>
+                    <li><span class="service-icon" aria-hidden="true">⇅</span>Data</li>
+                    <li><span class="service-icon" aria-hidden="true">ϟ</span>Electricity</li>
+                    <li><span class="service-icon" aria-hidden="true">▣</span>TV</li>
+                    <li><span class="service-icon" aria-hidden="true">◎</span>Betting</li>
+                    <li><span class="service-icon" aria-hidden="true">↗</span>Wealth</li>
+                    <li><span class="service-icon" aria-hidden="true">₦</span>Loan Center</li>
+                    <li><span class="service-icon" aria-hidden="true">✧</span>Rewards</li>
+                    <li><span class="service-icon" aria-hidden="true">▦</span>More Services</li>
+                </ul>
+                <p class="service-note">These services are currently unavailable.</p>
+            </section>
+        </div>
+    {{end}}
 
+    <div class="dashboard-sidebar">
+        <section class="panel activity" aria-labelledby="activity-title" id="activity">
+            <div class="section-heading">
+                {{if .History}}<h1 id="activity-title">Transactions</h1>{{else}}<h2 id="activity-title">Account activity</h2>{{end}}
+                {{if not .History}}<a href="/transactions">View All Transactions</a>{{end}}
+            </div>
+            {{if .Activity}}
+            <ul class="transactions">
+                {{range .Activity}}
+                <li><span class="transaction-icon" aria-hidden="true">↙</span><div><strong>{{.Description}}</strong><small>{{.Date}} UTC</small></div><strong>{{.Amount}}</strong></li>
+                {{end}}
+            </ul>
+            {{else}}<p class="empty">Your transactions will appear here.</p>{{end}}
+        </section>
+
+        {{if not .History}}
+        <section class="panel smart-picks" id="wealth" aria-labelledby="wealth-title">
+            <h2 id="wealth-title">Smart Picks for You</h2>
+            <p>Set a savings goal and choose an amount you can put aside each week.</p>
+        </section>
+        <details class="panel" id="help">
+            <summary>Help</summary>
+            <p>Use Add Money to deposit simulated funds. Visit Transactions to review your account activity.</p>
+        </details>
+        <section class="panel" id="profile" aria-labelledby="profile-title">
+            <div class="section-heading">
+                <h2 id="profile-title">My profile</h2>
+                <form action="/logout" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+                    <button class="text-button" type="submit">Log out</button>
+                </form>
+            </div>
+            <p>{{.Name}} · {{.AccountNumber}}</p>
+        </section>
+        {{end}}
+    </div>
+    {{if not .History}}</div>{{end}}
+</main>
+
+<nav class="bottom-nav" aria-label="Banking navigation">
+    <a href="/dashboard" {{if not .History}}aria-current="page"{{end}}><span aria-hidden="true">⌂</span>Home</a>
+    <a href="/transactions" {{if .History}}aria-current="page"{{end}}><span aria-hidden="true">≡</span>Transactions</a>
+    <a href="/dashboard#wealth"><span aria-hidden="true">↗</span>Wealth</a>
+    <span class="nav-unavailable" title="Cards unavailable"><span aria-hidden="true">▱</span>Cards<small>Unavailable</small></span>
+    <a href="/settings"><span aria-hidden="true">♙</span>Me</a>
+</nav>
 </body>
 </html>

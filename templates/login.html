@@ -1,39 +1,58 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | VELORA</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Sign In | VELORA</title>
+    <script src="/static/theme.js"></script>
+    <link rel="stylesheet" href="/static/theme.css">
+    <link rel="stylesheet" href="/static/login.css">
+    <script src="/static/login.js" defer></script>
 </head>
 <body>
+    <main class="sign-in">
+        <details class="login-help">
+            <summary>Help</summary>
+            <p>Use the email address and password you chose when you created your VELORA account.</p>
+        </details>
+        <a class="brand" href="/" aria-label="VELORA home"><span aria-hidden="true">V</span> VELORA</a>
+        <section class="sign-in-card" aria-labelledby="welcome">
+            <div class="welcome">
+                <div class="avatar" aria-hidden="true"></div>
+                <h1 id="welcome">Welcome back</h1>
+            </div>
 
-    <header>
-        <h2>VELORA</h2>
-        <a href="/">Home</a>
-    </header>
+            {{if .Message}}<p class="form-error" role="alert" id="login-error">{{.Message}}</p>{{end}}
+            <form class="credentials" action="/login" method="POST" {{if .Message}}aria-describedby="login-error"{{end}}>
+                <input type="hidden" name="csrf_token" value="{{csrfToken}}">
 
-    <main class="login-container">
-        <h1>Welcome Back</h1>
-        <p>Log in to your VELORA account.</p>
+                <label for="email">Email address</label>
+                <input id="email" name="email" type="email" value="{{.Email}}" placeholder="you@example.com"
+                       autocomplete="username" autocapitalize="none" maxlength="254" required>
 
-        <form action="/login" method="POST">
-            <label>Email Address</label>
-            <input type="email" name="email"
-                   placeholder="Enter your email" required>
+                <label for="password">Password</label>
+                <div class="password-field">
+                    <input id="password" name="password" type="password" placeholder="Enter your password"
+                           autocomplete="current-password" required>
+                    <button class="visibility-toggle" type="button" aria-controls="password" hidden>Show</button>
+                </div>
 
-            <label>Password</label>
-            <input type="password" name="password"
-                   placeholder="Enter your password" required>
+                <details class="recovery">
+                    <summary>Forgot password?</summary>
+                    <p>Password reset is currently unavailable.</p>
+                </details>
 
-            <button type="submit">Login</button>
-        </form>
+                <button class="primary" type="submit">Sign In</button>
+            </form>
+            {{if .SignedIn}}
+            <form class="switch-account" action="/logout" method="POST">
+                <input type="hidden" name="csrf_token" value="{{csrfToken}}">
+                <button type="submit">Switch Account</button>
+            </form>
+            {{end}}
+        </section>
 
-        <p>Don't have an account? 
-            <a href="/register">Create Account</a>
-        </p>
+        <p class="signup">New to VELORA? <a href="/register">Create Account</a></p>
     </main>
-
 </body>
 </html>

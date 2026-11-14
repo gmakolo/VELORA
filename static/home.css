@@ -1,0 +1,97 @@
+:root {
+    
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text);
+    --green: var(--button);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: grid;
+    min-height: 100vh;
+    min-height: 100dvh;
+    place-items: center;
+    margin: 0;
+}
+
+.welcome {
+    width: min(100%, 30rem);
+    padding: 3rem 1.25rem;
+    text-align: center;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: .15em;
+}
+
+.brand span {
+    display: grid;
+    width: 2.75rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: .9rem;
+    background: var(--green);
+    color: var(--on-button);
+    letter-spacing: 0;
+}
+
+h1 {
+    margin: 2rem 0 .625rem;
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    letter-spacing: -.04em;
+}
+
+p {
+    margin: 0;
+    color: var(--secondary);
+    line-height: 1.5;
+}
+
+.welcome-actions {
+    display: grid;
+    gap: .75rem;
+    margin: 2.25rem auto 0;
+    max-width: 22rem;
+}
+
+.welcome-actions a {
+    display: grid;
+    min-height: 3.25rem;
+    place-items: center;
+    padding: .75rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.create-account {
+    background: var(--green);
+    color: var(--on-button);
+}
+
+.create-account:hover {
+    background: var(--button); color: var(--on-button);
+}
+
+.log-in {
+    background: #e5f5ed;
+    color: var(--link);
+}
+
+.log-in:hover {
+    background: #d2eddf;
+}
+
+.welcome-actions a:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 4px;
+}
